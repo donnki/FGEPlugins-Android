@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="admobEnabled">false</string>
+    <string name="talkingdataEnabled">false</string>
+    <string name="gaEnabled">false</string>
+    <string name="iabEnabled">false</string>
+    <string name="tagManagerEnabled">true</string>
+    <string name="commonEnabled">false</string>
+    <string name="gameServiceEnabled">false</string>
+    
+    <!-- 插屏广告ID -->
+    <string name="admobInterstitialID">ca-app-pub-2550536070025080/1660836858</string>
+    
+    <!-- Google TagManager Container ID  -->
+    <string name="tmContainerID">GTM-5XJR2D</string>
+    <string-array name="test">
+        <item>hello</item>
+        <item>world</item>
+    </string-array>
+    
+    <!-- Google IAB  -->
+    <string name="iabPublicKey">MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwj6mHuvvQELiuZHWJrLXGfiFo9eQu//DnsO91jaMg/oChJ9JnCo2aMjliti/EKTDxU42MHx3P4hJiu7Duei7U6m7ocyv+156iKFUCqr/SOc4ZdE2HGLkqw1m/bHVsHSAJM9sbD41aWwSSZAx4H4P8tKyV5lqSP3mWcfq+UMUqg1MRlM4OzyZcnZ2fjM+SHBPItyND8WrqFmUNMaHbklLt6imzJDXOg8w+JXFuVf25flOJNR7NzdH6iNL+LJzFkii0fOidCwyUwkyeEyboSJPMiKmdYMW/fSBHmcpxrdr1kfS3/9YX8HqzKd2r/II3rB87UssQnJ+8FueWEjDQh/PRQIDAQAB</string>
+    
+    <!-- TalkingData appID、channel -->
+    <string name="tdAppID">2850691E320321C073BA88D706228661</string>
+    <string name="tdAppChannel">GooglePlay</string>
+    
+</resources>

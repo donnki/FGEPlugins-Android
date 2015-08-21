@@ -1,7 +1,7 @@
 package com.luciolagames.libfgeplugins;
 
-import org.cocos2dx.lib.Cocos2dxActivity;
-import org.cocos2dx.lib.Cocos2dxLuaJavaBridge;
+//import org.cocos2dx.lib.Cocos2dxActivity;
+//import org.cocos2dx.lib.Cocos2dxLuaJavaBridge;
 
 import com.android.iab.util.IabHelper;
 import com.android.iab.util.IabResult;
@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 public class GooglePlayIABPlugin {
-	public static final String TAG = "GAME";
+//	public static final String TAG = "GAME";
 	public static int luaSuccessCallback = -1;
 	public static int luaFailedCallback = -1;
 	
@@ -23,12 +23,12 @@ public class GooglePlayIABPlugin {
 	private static GooglePlayIABPlugin sInstance;
 	
 	public IabHelper mHelper;
-	private String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwj6mHuvvQELiuZHWJrLXGfiFo9eQu//DnsO91jaMg/oChJ9JnCo2aMjliti/EKTDxU42MHx3P4hJiu7Duei7U6m7ocyv+156iKFUCqr/SOc4ZdE2HGLkqw1m/bHVsHSAJM9sbD41aWwSSZAx4H4P8tKyV5lqSP3mWcfq+UMUqg1MRlM4OzyZcnZ2fjM+SHBPItyND8WrqFmUNMaHbklLt6imzJDXOg8w+JXFuVf25flOJNR7NzdH6iNL+LJzFkii0fOidCwyUwkyeEyboSJPMiKmdYMW/fSBHmcpxrdr1kfS3/9YX8HqzKd2r/II3rB87UssQnJ+8FueWEjDQh/PRQIDAQAB";
+//	private String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwj6mHuvvQELiuZHWJrLXGfiFo9eQu//DnsO91jaMg/oChJ9JnCo2aMjliti/EKTDxU42MHx3P4hJiu7Duei7U6m7ocyv+156iKFUCqr/SOc4ZdE2HGLkqw1m/bHVsHSAJM9sbD41aWwSSZAx4H4P8tKyV5lqSP3mWcfq+UMUqg1MRlM4OzyZcnZ2fjM+SHBPItyND8WrqFmUNMaHbklLt6imzJDXOg8w+JXFuVf25flOJNR7NzdH6iNL+LJzFkii0fOidCwyUwkyeEyboSJPMiKmdYMW/fSBHmcpxrdr1kfS3/9YX8HqzKd2r/II3rB87UssQnJ+8FueWEjDQh/PRQIDAQAB";
 	
 	
-	private Cocos2dxActivity context;
+	private Activity context;
 	
-	public GooglePlayIABPlugin(Cocos2dxActivity activity) {
+	public GooglePlayIABPlugin(Activity activity) {
 		this.context = activity;
 		sInstance = this;
 		init();
@@ -36,11 +36,11 @@ public class GooglePlayIABPlugin {
 
 
 	private void init() {
-		mHelper = new IabHelper(context, base64EncodedPublicKey);
+		mHelper = new IabHelper(context, context.getString(R.string.iabPublicKey));
 		mHelper.enableDebugLogging(true);
 		mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener() {
 			public void onIabSetupFinished(IabResult result) {
-				Log.d(TAG, "Setup finished.");
+				Log.d(PluginManager.TAG, "[IabPlugin] Setup finished.");
 				if (!result.isSuccess()) {
 					complain("Problem setting up in-app billing: " + result);
 					return;
@@ -49,7 +49,7 @@ public class GooglePlayIABPlugin {
 				if (mHelper == null)
 					return;
 
-				Log.d(TAG, "Setup successful. ");
+				Log.d(PluginManager.TAG, "[IabPlugin] Setup successful. ");
 				mHelper.queryInventoryAsync(mGotInventoryListener);
 			}
 		}); 
@@ -57,7 +57,7 @@ public class GooglePlayIABPlugin {
 	
 	
 	public void onDestroy(){
-		Log.d(TAG, "Destroying helper.");
+		Log.d(PluginManager.TAG, "[IabPlugin] Destroying helper.");
         if (mHelper != null) {
             mHelper.dispose();
             mHelper = null;
@@ -72,7 +72,7 @@ public class GooglePlayIABPlugin {
             // billing...
         }
         else {
-            Log.d(TAG, "onActivityResult handled by IABUtil. ");
+            Log.d(PluginManager.TAG, "[IabPlugin] onActivityResult handled by IABUtil. ");
         }
 	}
 	
@@ -93,18 +93,18 @@ public class GooglePlayIABPlugin {
 	IabHelper.QueryInventoryFinishedListener mGotInventoryListener = new IabHelper.QueryInventoryFinishedListener() {
 		public void onQueryInventoryFinished(IabResult result,
 				Inventory inventory) {
-			Log.d(TAG, "Query inventory finished.");
+			Log.d(PluginManager.TAG, "[IabPlugin] Query inventory finished.");
 			if (result.isFailure()) {
 				complain("Failed to query inventory: " + result);
 				return;
 			}
-			Log.d(TAG, "Query inventory was successful.");
+			Log.d(PluginManager.TAG, "[IabPlugin] Query inventory was successful.");
 			
 			
 			Purchase gasPurchase = inventory
 					.getPurchase("com.banabala.runpuppyrun.diamond40");
 			if (gasPurchase != null && verifyDeveloperPayload(gasPurchase)) {
-				Log.d(TAG, "We have gas. Consuming it.");
+				Log.d(PluginManager.TAG, "[IabPlugin] We have gas. Consuming it.");
 				mHelper.consumeAsync(
 						inventory.getPurchase("com.banabala.runpuppyrun.diamond40"),
 						mConsumeFinishedListener);
@@ -116,7 +116,7 @@ public class GooglePlayIABPlugin {
 	
 	IabHelper.OnIabPurchaseFinishedListener mPurchaseFinishedListener = new IabHelper.OnIabPurchaseFinishedListener() {
 		public void onIabPurchaseFinished(IabResult result, Purchase purchase) {
-			Log.d(TAG, "Purchase finished: " + result + ", purchase: "
+			Log.d(PluginManager.TAG, "[IabPlugin] Purchase finished: " + result + ", purchase: "
 					+ purchase);
 
 			if (mHelper == null)
@@ -124,17 +124,18 @@ public class GooglePlayIABPlugin {
 			if (result.isFailure()) {
 				complain("Error purchasing: " + result);
 				final String response = result.toString();
+				/*
 				context.runOnGLThread(new Runnable() {
 		            @Override
 		            public void run() {
 		            	if(luaFailedCallback != -1){
-		            		Log.d(TAG, "call lua response: " + response);
+		            		Log.d(PluginManager.TAG, "[IabPlugin] call lua response: " + response);
 							Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFailedCallback, response);
 							clearLuaCallback();
 						}
 		            }
 		          });
-				 
+				 */
 				return;
 			}
 			if (!verifyDeveloperPayload(purchase)) {
@@ -142,7 +143,7 @@ public class GooglePlayIABPlugin {
 				return;
 			}
 
-			Log.d(TAG, "Purchase successful. consuming...");
+			Log.d(PluginManager.TAG, "[IabPlugin] Purchase successful. consuming...");
 			mHelper.consumeAsync(purchase, mConsumeFinishedListener);
 			
 		}
@@ -150,14 +151,15 @@ public class GooglePlayIABPlugin {
 
 	IabHelper.OnConsumeFinishedListener mConsumeFinishedListener = new IabHelper.OnConsumeFinishedListener() {
 		public void onConsumeFinished(Purchase purchase, IabResult result) {
-			Log.d(TAG, "Consumption finished. Purchase: " + purchase
+			Log.d(PluginManager.TAG, "[IabPlugin] Consumption finished. Purchase: " + purchase
 					+ ", result: " + result);
 
 			if (mHelper == null)
 				return;
 
 			if (result.isSuccess()) {
-				Log.d(TAG, " Consumption successful. Provisioning.");
+				Log.d(PluginManager.TAG, "[IabPlugin]  Consumption successful. Provisioning.");
+				/*
 				context.runOnGLThread(new Runnable() {
 		            @Override
 		            public void run() {
@@ -167,15 +169,16 @@ public class GooglePlayIABPlugin {
 						}
 		            }
 		          });
+		          */
 			} else {
 				complain("Error while consuming: " + result);
 			}
-			Log.d(TAG, "End consumption flow.");
+			Log.d(PluginManager.TAG, "[IabPlugin] End consumption flow.");
 		}
 	};
 
 	void complain(String message) {
-		Log.e(TAG, "**** Error: " + message);
+		Log.e(PluginManager.TAG, "[IabPlugin] **** Error: " + message);
 		//alert("Error: " + message);
 	}
 
@@ -183,15 +186,17 @@ public class GooglePlayIABPlugin {
 		AlertDialog.Builder bld = new AlertDialog.Builder(context);
 		bld.setMessage(message);
 		bld.setNeutralButton("OK", null);
-		Log.d(TAG, "Showing alert dialog: " + message);
+		Log.d(PluginManager.TAG, "[IabPlugin] Showing alert dialog: " + message);
 		bld.create().show();
 	}
 	
 	private static void clearLuaCallback(){
+		/*
 		Cocos2dxLuaJavaBridge.releaseLuaFunction(luaFailedCallback);
 		Cocos2dxLuaJavaBridge.releaseLuaFunction(luaSuccessCallback);
 		luaFailedCallback = -1;
 		luaSuccessCallback = -1;
+		*/
 	} 
 	 
 	/**

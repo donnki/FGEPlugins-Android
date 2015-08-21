@@ -1,17 +1,61 @@
 package com.luciolagames.libfgeplugins;
 
-import org.cocos2dx.lib.Cocos2dxActivity;
+//import org.cocos2dx.lib.Cocos2dxActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 
 public class PluginManager {
-	private static String TAG = "LuciolaGames";
+	public static final String TAG = "FGEPlugins";
 	public static Class invokeClass;
 	
 	protected GooglePlayIABPlugin mIABPlugin = null;
 	protected GooglePlayGameServicePlugin mGameServicePlugin = null;
+	protected GoogleGAStatisticPlugin mGAPlugin = null;
 	protected AdmobPlugin mAdmobPlugin = null;
 	protected CommonHelper mHelper = null;
+	protected TalkingGameStatisticPlugin mStatisticPlugin = null;
+	protected GoogleTagManagerPlugin mTagManagerPlugin = null;
+	
+	public PluginManager(Activity context, Class cls) {
+		invokeClass = cls;
+		
+		if(context.getString(R.string.commonEnabled).equalsIgnoreCase("true")){
+			Log.d(TAG, "init CommonHelper");
+			mHelper = new CommonHelper(context);
+		}
+		if(context.getString(R.string.gaEnabled).equalsIgnoreCase("true")){
+			Log.d(TAG, "init GoogleGAStatisticPlugin");
+			mGAPlugin = new GoogleGAStatisticPlugin(context);
+		}
+		
+		if(context.getString(R.string.iabEnabled).equalsIgnoreCase("true")){
+			Log.d(TAG, "init GooglePlayIABPlugin");
+			mIABPlugin = new GooglePlayIABPlugin(context);
+		}
+		
+		if(context.getString(R.string.gameServiceEnabled).equalsIgnoreCase("true")){
+			Log.d(TAG, "init GooglePlayGameServicePlugin");
+			mGameServicePlugin = new GooglePlayGameServicePlugin(context);
+		}
+		
+		if(context.getString(R.string.admobEnabled).equalsIgnoreCase("true")){
+			Log.d(TAG, "init AdmobPlugin");
+			mAdmobPlugin = new AdmobPlugin(context);
+		}
+		
+		if(context.getString(R.string.talkingdataEnabled).equalsIgnoreCase("true")){
+			Log.d(TAG, "init TalkingGameStatisticPlugin");
+			mStatisticPlugin = new TalkingGameStatisticPlugin(context);
+		}
+		
+		if(context.getString(R.string.tagManagerEnabled).equalsIgnoreCase("true")){
+			Log.d(TAG, "init GoogleTagManagerPlugin");
+			mTagManagerPlugin = new GoogleTagManagerPlugin(context);
+		}
+	}
+	
 	
 	public GooglePlayIABPlugin getIABPlugin() {
 		return mIABPlugin;
@@ -52,17 +96,13 @@ public class PluginManager {
 	public void setStatisticPlugin(TalkingGameStatisticPlugin mStatisticPlugin) {
 		this.mStatisticPlugin = mStatisticPlugin;
 	}
-
-
-	protected TalkingGameStatisticPlugin mStatisticPlugin = null;
 	
-	public PluginManager(Cocos2dxActivity context, Class cls) {
-		invokeClass = cls;
-		mHelper = new CommonHelper(context);
-		mIABPlugin = new GooglePlayIABPlugin(context);
-		mGameServicePlugin = new GooglePlayGameServicePlugin(context);
-		mAdmobPlugin = new AdmobPlugin(context);
-		mStatisticPlugin = new TalkingGameStatisticPlugin(context);
+	public GoogleTagManagerPlugin getTagManagerPlugin() {
+		return mTagManagerPlugin;
+	}
+
+	public void setStatisticPlugin(GoogleTagManagerPlugin mTagManagerPlugin) {
+		this.mTagManagerPlugin = mTagManagerPlugin;
 	}
 
     public void onStart() {
@@ -81,6 +121,9 @@ public class PluginManager {
     public void onDestroy() {
         if (mIABPlugin != null){
         	mIABPlugin.onDestroy(); 
+        }
+        if (mGAPlugin != null){
+        	mGAPlugin.onDestroy();
         }
     }
     

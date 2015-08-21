@@ -9,8 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.cocos2dx.lib.Cocos2dxActivity;
-import org.cocos2dx.lib.Cocos2dxLuaJavaBridge;
+
+//import org.cocos2dx.lib.Cocos2dxActivity;
+//import org.cocos2dx.lib.Cocos2dxLuaJavaBridge;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -55,7 +56,7 @@ import com.luciolagames.libfgeplugins.R;
 public class GooglePlayGameServicePlugin implements
 		GoogleApiClient.ConnectionCallbacks,
 		GoogleApiClient.OnConnectionFailedListener, QuestUpdateListener {
-	private static final String TAG = "GAME";
+//	private static final String TAG = "GAME";
 	private static final int PAGE_MAX = 10;
 	private static final int APP_STATE_KEY = 0;
 	
@@ -69,7 +70,7 @@ public class GooglePlayGameServicePlugin implements
 	private static GooglePlayGameServicePlugin sInstance;
     
 	private GoogleApiClient mGoogleApiClient;
-	private Cocos2dxActivity context;
+	private Activity context;
 	private ResultCallback<Quests.ClaimMilestoneResult> mClaimMilestoneResultCallback;
 	
 	private boolean mResolvingConnectionFailure = false;
@@ -78,7 +79,7 @@ public class GooglePlayGameServicePlugin implements
 	
 	private String mCurrentSaveName;
 
-	public GooglePlayGameServicePlugin(Cocos2dxActivity activity) {
+	public GooglePlayGameServicePlugin(Activity activity) {
 		this.context = activity;
 		sInstance = this;
 		initGameService();
@@ -105,7 +106,7 @@ public class GooglePlayGameServicePlugin implements
                         Toast.makeText(context, "Congratulations, you got a " + reward,
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        Log.e(TAG, "Reward was not claimed due to error.");
+                        Log.e(PluginManager.TAG, "[GameServicePlugin] Reward was not claimed due to error.");
                         Toast.makeText(context, "Reward was not claimed due to error.",
                                 Toast.LENGTH_LONG).show();
                     }
@@ -118,14 +119,14 @@ public class GooglePlayGameServicePlugin implements
 
 	public void onStart() {
 		if (mGoogleApiClient != null) {
-			Log.d(TAG, "onStart(): connecting");
+			Log.d(PluginManager.TAG, "[GameServicePlugin] onStart(): connecting");
 			mGoogleApiClient.connect();
 		}
 	}
 
 	public void onStop() {
 		if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-			Log.d(TAG, "onStop(): disconnecting");
+			Log.d(PluginManager.TAG, "[GameServicePlugin] onStop(): disconnecting");
 			mGoogleApiClient.disconnect();
 		}
 	}
@@ -140,7 +141,7 @@ public class GooglePlayGameServicePlugin implements
 						resultCode, R.string.signin_other_error);
 			}
 		} else if (requestCode == RC_SELECT_SNAPSHOT) {
-            Log.d(TAG, "onActivityResult: RC_SELECT_SNAPSHOT, resultCode = " + resultCode);
+            Log.d(PluginManager.TAG, "[GameServicePlugin] onActivityResult: RC_SELECT_SNAPSHOT, resultCode = " + resultCode);
             if (resultCode == Activity.RESULT_OK) {
                 // Successfully returned from Snapshot selection UI
                 if (intent != null) {
@@ -174,18 +175,18 @@ public class GooglePlayGameServicePlugin implements
 	
 	@Override
 	public void onConnected(Bundle bundle) {
-		Log.d(TAG, "onConnected(): connected to Google APIs");
+		Log.d(PluginManager.TAG, "[GameServicePlugin] onConnected(): connected to Google APIs");
 
 		Player p = Games.Players.getCurrentPlayer(mGoogleApiClient);
 		String displayName;
 		if (p == null) {
-			Log.w(TAG, "mGamesClient.getCurrentPlayer() is NULL!");
+			Log.w(PluginManager.TAG, "[GameServicePlugin] mGamesClient.getCurrentPlayer() is NULL!");
 			displayName = "???";
 		} else {
 			displayName = p.getDisplayName();
 		}
 		// TODO: say hello
-		Log.d(TAG, "Hello, " + displayName);
+		Log.d(PluginManager.TAG, "[GameServicePlugin] Hello, " + displayName);
 		
 		Games.Quests.registerQuestUpdateListener(mGoogleApiClient, this);
 	}
@@ -194,15 +195,15 @@ public class GooglePlayGameServicePlugin implements
 
 	@Override
 	public void onConnectionSuspended(int i) {
-		Log.d(TAG, "onConnectionSuspended(): attempting to connect");
+		Log.d(PluginManager.TAG, "[GameServicePlugin] onConnectionSuspended(): attempting to connect");
 		mGoogleApiClient.connect();
 	}
 
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
-		Log.d(TAG, "onConnectionFailed(): attempting to resolve");
+		Log.d(PluginManager.TAG, "[GameServicePlugin] onConnectionFailed(): attempting to resolve");
 		if (mResolvingConnectionFailure) {
-			Log.d(TAG, "onConnectionFailed(): already resolving");
+			Log.d(PluginManager.TAG, "[GameServicePlugin] onConnectionFailed(): already resolving");
 			return;
 		}
 		// TODO: Sign-in failed, so show sign-in button on main menu
@@ -227,23 +228,23 @@ public class GooglePlayGameServicePlugin implements
         PendingResult<Snapshots.OpenSnapshotResult> pendingResult = Games.Snapshots.open(
                 mGoogleApiClient, snapshotName, false);
 
-        Log.d(TAG, "Loading Saved Game");
+        Log.d(PluginManager.TAG, "[GameServicePlugin] Loading Saved Game");
         ResultCallback<Snapshots.OpenSnapshotResult> callback =
                 new ResultCallback<Snapshots.OpenSnapshotResult>() {
             @Override
             public void onResult(Snapshots.OpenSnapshotResult openSnapshotResult) {
                 if (openSnapshotResult.getStatus().isSuccess()) {
-                	Log.i(TAG, "saved_games_load_success");
+                	Log.i(PluginManager.TAG, "[GameServicePlugin] saved_games_load_success");
                     byte[] data = new byte[0];
                     try {
                         data = openSnapshotResult.getSnapshot().getSnapshotContents().readFully();
                     } catch (IOException e) {
-                        Log.e(TAG, "Exception reading snapshot: " + e.getMessage());
+                        Log.e(PluginManager.TAG, "[GameServicePlugin] Exception reading snapshot: " + e.getMessage());
                     }
                     //setData(new String(data));
                     //displaySnapshotMetadata(openSnapshotResult.getSnapshot().getMetadata());
                 } else {
-                	Log.w(TAG, "saved_games_load_failure");
+                	Log.w(PluginManager.TAG, "[GameServicePlugin] saved_games_load_failure");
                     //clearDataUI();
                 }
 
@@ -302,7 +303,7 @@ public class GooglePlayGameServicePlugin implements
         AsyncTask<Void, Void, Boolean> updateTask = new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected void onPreExecute() {
-                Log.i(TAG, "Updating Saved Game");
+                Log.i(PluginManager.TAG, "[GameServicePlugin] Updating Saved Game");
             }
 
             @Override
@@ -311,7 +312,7 @@ public class GooglePlayGameServicePlugin implements
                         mGoogleApiClient, snapshotName, createIfMissing).await();
 
                 if (!open.getStatus().isSuccess()) {
-                    Log.w(TAG, "Could not open Snapshot for update.");
+                    Log.w(PluginManager.TAG, "[GameServicePlugin] Could not open Snapshot for update.");
                     return false;
                 }
 
@@ -323,7 +324,7 @@ public class GooglePlayGameServicePlugin implements
                         mGoogleApiClient, snapshot, SnapshotMetadataChange.EMPTY_CHANGE).await();
 
                 if (!commit.getStatus().isSuccess()) {
-                    Log.w(TAG, "Failed to commit Snapshot.");
+                    Log.w(PluginManager.TAG, "[GameServicePlugin] Failed to commit Snapshot.");
                     return false;
                 }
 
@@ -334,9 +335,9 @@ public class GooglePlayGameServicePlugin implements
             @Override
             protected void onPostExecute(Boolean result) {
                 if (result) {
-                    Log.i(TAG, "saved_games_update_success");
+                    Log.i(PluginManager.TAG, "[GameServicePlugin] saved_games_update_success");
                 } else {
-                	Log.i(TAG, "saved_games_update_failure");
+                	Log.i(PluginManager.TAG, "[GameServicePlugin] saved_games_update_failure");
                 }
 
                 //dismissProgressDialog();
@@ -357,7 +358,7 @@ public class GooglePlayGameServicePlugin implements
         String message = "You successfully completed quest " + quest.getName();
 
         // Print out message for debugging purposes.
-        Log.i(TAG, message);
+        Log.i(PluginManager.TAG, "[GameServicePlugin] "+ message);
 
         // Create a custom toast to indicate the quest was successfully completed.
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
@@ -396,13 +397,13 @@ public class GooglePlayGameServicePlugin implements
 
 	            String message = "Current quest details: \n";
 
-	            Log.i(TAG, "Number of quests: " + qb.getCount());
+	            Log.i(PluginManager.TAG, "[GameServicePlugin] Number of quests: " + qb.getCount());
 
 	            for(int i=0; i < qb.getCount(); i++) {
 	                message += "Quest: " + qb.get(i).getName() + " id: " + qb.get(i).getQuestId();
 	            }
 	            qb.close();
-	            Log.i(TAG, message);
+	            Log.i(PluginManager.TAG, "[GameServicePlugin] "+ message);
 			}
 		});
     }
@@ -420,14 +421,14 @@ public class GooglePlayGameServicePlugin implements
 
 	            String message = "Current stats: \n";
 
-	            Log.i(TAG, "number of events: " + eb.getCount());
+	            Log.i(PluginManager.TAG, "[GameServicePlugin] number of events: " + eb.getCount());
 
 	            for(int i=0; i < eb.getCount(); i++) {
 	                message += "event: " + eb.get(i).getName() + " " + eb.get(i).getEventId() +
 	                        " " + eb.get(i).getValue() + "\n";
 	            }
 	            eb.close(); 
-	            Log.i(TAG, message);
+	            Log.i(PluginManager.TAG, "[GameServicePlugin] "+ message);
 	            
 			}
 			
@@ -479,7 +480,8 @@ public class GooglePlayGameServicePlugin implements
 						}
 						JSONArray obj = new JSONArray(lscores);
 						final String response = obj.toString();
-						Log.d(TAG, "response: " + response);
+						Log.d(PluginManager.TAG, "[GameServicePlugin] response: " + response);
+						/*
 						context.runOnGLThread(new Runnable() {
 				            @Override
 				            public void run() {
@@ -487,7 +489,7 @@ public class GooglePlayGameServicePlugin implements
 				            	Cocos2dxLuaJavaBridge.releaseLuaFunction(callback);
 				            }
 				          });
-						
+						*/
 						scores.close();
 					}
 
@@ -526,7 +528,7 @@ public class GooglePlayGameServicePlugin implements
 
 	public void onLeaderboardSubmitScore(String leaderboardID, long score) {
 		if (isSignedIn()) {
-			Log.d(TAG, "onLeaderboardSubmitScore: " + score);
+			Log.d(PluginManager.TAG, "[GameServicePlugin] onLeaderboardSubmitScore: " + score);
 			Games.Leaderboards.submitScoreImmediate(mGoogleApiClient,
 					leaderboardID, score);
 		} else {
@@ -560,7 +562,7 @@ public class GooglePlayGameServicePlugin implements
 	 * 显示排行榜列表
 	 * */
 	public static void showLeaderboards() {
-		Log.d(TAG, "showLeaderboards");
+		Log.d(PluginManager.TAG, "[GameServicePlugin] showLeaderboards");
 		sInstance.onShowLeaderboardsRequested();
 	}
 
@@ -568,7 +570,7 @@ public class GooglePlayGameServicePlugin implements
 	 * 显示成就列表
 	 * */
 	public static void showAchievements() {
-		Log.d(TAG, "showAchievements");
+		Log.d(PluginManager.TAG, "[GameServicePlugin] showAchievements");
 		sInstance.onShowAchievementsRequested();
 	}
 
@@ -576,7 +578,7 @@ public class GooglePlayGameServicePlugin implements
 	 * 解锁成就
 	 * */
 	public static void unlockAchievement(String achievementID) {
-		Log.d(TAG, "unlockAchievement: " + achievementID);
+		Log.d(PluginManager.TAG, "[GameServicePlugin] unlockAchievement: " + achievementID);
 		sInstance.unlockAchievementRequest(achievementID, "");
 	}
 
@@ -584,7 +586,7 @@ public class GooglePlayGameServicePlugin implements
 	 * 显示指定排行榜ID的总排行榜
 	 * */
 	public static void showLeaderboardByID(String id, int span) {
-		Log.d(TAG, "showLeaderboards");
+		Log.d(PluginManager.TAG, "[GameServicePlugin] showLeaderboards");
 		int timeSpan = LeaderboardVariant.TIME_SPAN_ALL_TIME;
 		if (span == 1) {
 			timeSpan = LeaderboardVariant.TIME_SPAN_DAILY;
@@ -598,7 +600,7 @@ public class GooglePlayGameServicePlugin implements
 	 * 提交指定排行榜分数
 	 * */
 	public static void submitLeaderboardScore(String id, int score) {
-		Log.d(TAG, "submitLeaderboardScore," + id + ", " + score);
+		Log.d(PluginManager.TAG, "[GameServicePlugin] submitLeaderboardScore," + id + ", " + score);
 		sInstance.onLeaderboardSubmitScore(id, score);
 	}
 	

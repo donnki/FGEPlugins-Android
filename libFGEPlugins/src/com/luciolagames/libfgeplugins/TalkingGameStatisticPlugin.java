@@ -17,13 +17,13 @@ import com.tendcloud.tenddata.TalkingDataGA;
 
 public class TalkingGameStatisticPlugin {
 	private Activity context;
-	private static final String APP_ID = "2850691E320321C073BA88D706228661";
-	private static final String APP_CHANNEL = "GooglePlay";
+//	private static final String APP_ID = "2850691E320321C073BA88D706228661";
+//	private static final String APP_CHANNEL = "GooglePlay";
 	
 	
 	public TalkingGameStatisticPlugin(Activity context){
 		this.context = context;
-		TalkingDataGA.init(context, APP_ID, APP_CHANNEL);
+		TalkingDataGA.init(context, context.getString(R.string.tdAppID), context.getString(R.string.tdAppChannel));
 		TDGAAccount account = TDGAAccount.setAccount(TalkingDataGA.getDeviceId(context)); 
 		account.setAccountType(TDGAAccount.AccountType.ANONYMOUS);
 	}

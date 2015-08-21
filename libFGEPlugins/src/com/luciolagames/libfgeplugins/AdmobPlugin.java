@@ -9,9 +9,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
 public class AdmobPlugin {
-	public static final String TAG = "GAME";
+//	public static final String TAG = "GAME";
 	
-	private static final String ADMOB_INTERSTITIAL = "ca-app-pub-2550536070025080/1660836858";
+//	private static final String ADMOB_INTERSTITIAL = "ca-app-pub-2550536070025080/1660836858";
 	
 	protected static AdmobPlugin sInstance;
 	
@@ -28,27 +28,27 @@ public class AdmobPlugin {
 	
 	private void init(){
 		mInterstitialAd = new InterstitialAd(context);
-        mInterstitialAd.setAdUnitId(ADMOB_INTERSTITIAL);
+        mInterstitialAd.setAdUnitId(context.getString(R.string.admobInterstitialID));
         mInterstitialAd.setAdListener(new AdListener(){
         	@Override 
         	public void onAdClosed(){
-        		Log.d(TAG, "on InterstitialAd Closed");
+        		Log.d(PluginManager.TAG, "[AdmobPlugin] on InterstitialAd Closed");
         		requestNewInterstitial();
         	}
         	
         	@Override
         	public void onAdOpened(){
-        		Log.d(TAG, "on InterstitialAd opened");
+        		Log.d(PluginManager.TAG, "[AdmobPlugin] on InterstitialAd opened");
         	}
         	
         	@Override
         	public void onAdLoaded(){
-        		Log.d(TAG, "on InterstitialAd Loaded");
+        		Log.d(PluginManager.TAG, "[AdmobPlugin] on InterstitialAd Loaded");
         	}
         	
         	@Override
         	public void onAdFailedToLoad(int result){
-        		Log.d(TAG, "on InterstitialAd FailedToLoad");
+        		Log.d(PluginManager.TAG, "[AdmobPlugin] on InterstitialAd FailedToLoad");
         	}
         });
         requestNewInterstitial();
@@ -63,11 +63,11 @@ public class AdmobPlugin {
 		context.runOnUiThread(new Runnable(){
 			@Override
 			public void run() {
-				Log.d(TAG, "Show InterstitialAD, isLoaded: " + mInterstitialAd.isLoaded());
+				Log.d(PluginManager.TAG, "[AdmobPlugin] Show InterstitialAD, isLoaded: " + mInterstitialAd.isLoaded());
 				if (mInterstitialAd.isLoaded()) {
 		            mInterstitialAd.show();
 		        } else {
-		        	Log.d(TAG, "InterstiticalAD not loaded yet");
+		        	Log.d(PluginManager.TAG, "[AdmobPlugin] InterstiticalAD not loaded yet");
 		        }
 			}
 		});
@@ -76,6 +76,6 @@ public class AdmobPlugin {
 	
 	public static void showInterstitialAD(){
 		sInstance.onShowInterstiticalAD();
-		Log.d(TAG, "Show InterstitialAD, end");
+		Log.d(PluginManager.TAG, "[AdmobPlugin] Show InterstitialAD, end");
 	}
 }

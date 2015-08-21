@@ -17,7 +17,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class CommonHelper {
-	private static final String TAG = "GAME";
+	//	private static final String TAG = "GAME";
 	private static CommonHelper sInstance;
 	private static final int notifyID = 1001;
 	
@@ -45,13 +45,13 @@ public class CommonHelper {
 		UUID deviceUuid = new UUID(androidId.hashCode(),
 				((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
 		String uniqueId = deviceUuid.toString();
-		Log.d(TAG, "uuid=" + uniqueId);
+		Log.d(PluginManager.TAG, "[CommonHelper] uuid=" + uniqueId);
 		return uniqueId;
 	}
 	
 	
 	public static void addNotification(String title, String detail, int sec){
-		Log.i(TAG, "addNotification: " + title + ", detail: " + detail + ", delayTime: " + sec);
+		Log.i(PluginManager.TAG, "[CommonHelper] addNotification: " + title + ", detail: " + detail + ", delayTime: " + sec);
 		 Calendar calendar = Calendar.getInstance();
 		 calendar.setTimeInMillis(System.currentTimeMillis());
 		 // Add defined amount of days to the date
